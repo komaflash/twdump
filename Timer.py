@@ -11,14 +11,14 @@ class Timer(object):
 
     def start(self):
         """Starts the timer"""
-        self.start = dt.datetime.now()
-        return self.start
+        self.begin = dt.datetime.now()
+        return self.begin
 
     def stop(self):
         """Stops the timer.  Returns the time elapsed"""
-        self.stop = dt.datetime.now()
-        return self.stop
+        self.end = dt.datetime.now()
+        return self.end
 
     def elapsed(self):
         """Time elapsed since start was called"""
-        return self.stop - self.start
+        return self.end - self.begin

@@ -1,12 +1,12 @@
 # -*- coding: utf-8 -*-
 
 from twitterscraper import query_tweets
-from json import JSONDecodeError
 import csv
 import datetime as dt
 import calendar
 import logging
 import re
+import json
 
 
 class TweetQuery(object):
@@ -60,7 +60,7 @@ class TweetQuery(object):
                         # if we reach here, everything is
                         # all right and we want to leave the loop
                         retry = retry_max+1
-                    except JSONDecodeError as err:
+                    except json.decoder.JSONDecodeError as err:
                         logging.warning("Query failed, try %s/%s (%s)", retry, retry_max, str(err))
                         retry = retry+1
 
@@ -77,7 +77,7 @@ class TweetQuery(object):
                                          tweet.timestamp,
                                          tweet.url,
                                          tweet.user,
-                                         self.__extractHashTags__(tweet.text)])
+                                         self.__extract_hash_tags__(tweet.text)])
                     except Exception as ex:
                         logging.error("Failed to process tweet. \n tweet_text=%s \n error=%s ", tweet.id, str(ex))
 
@@ -116,7 +116,7 @@ class TweetQuery(object):
         """Apply proper normalization of the tweet next here"""
         return text.replace('\n', ' ').replace('\r', '')
 
-    def __extractHashTags__(self, text):
+    def __extract_hash_tags__(self, text):
         """Extracts #hashtags from a string and returns them as online, separated by slash
         :param text: tweet text
         :return: For example hashtag1/hashtag2/hashtag3
