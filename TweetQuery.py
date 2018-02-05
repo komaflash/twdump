@@ -34,7 +34,7 @@ class TweetQuery(object):
         tweet_count = 0
 
         # open the csv file
-        with open(file_name, 'w') as fw:
+        with open(file_name, 'a') as fw:
             writer = csv.writer(fw)
 
             # write header
@@ -81,7 +81,6 @@ class TweetQuery(object):
                     except Exception as ex:
                         logging.error("Failed to process tweet. \n tweet_text=%s \n error=%s ", tweet.id, str(ex))
 
-        fw.close()
         return tweet_count
 
     def __get_date_ranges__(self, a, b):
