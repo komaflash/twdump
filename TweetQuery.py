@@ -25,7 +25,7 @@ class TweetQuery(object):
         # we'll query the api per month.
         # we calculated the start and end dates
         # of each month between begin and end
-        ranges = self.__get_date_ranges__(date_begin, date_end)
+        date_ranges = self.__get_date_ranges__(date_begin, date_end)
 
         # create the file name
         file_name = self.__get_output_file_name__()
@@ -44,7 +44,7 @@ class TweetQuery(object):
             # for each range:
             #   query tweets
             #   write them to csv
-            for range in ranges:
+            for date_range in date_ranges:
                 retry = 1
                 retry_max = 3
 
@@ -52,8 +52,8 @@ class TweetQuery(object):
                     try:
                         tweet_query = query_tweets("from:" + self.accountName,
                                                    limit=100000,
-                                                   begindate=range[0],
-                                                   enddate=range[1],
+                                                   begindate=date_range[0],
+                                                   enddate=date_range[1],
                                                    poolsize=5,
                                                    lang='')
 

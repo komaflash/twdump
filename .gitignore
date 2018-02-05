@@ -91,6 +91,7 @@ ENV/
 .spyderproject
 .spyproject
 
+
 # Rope project settings
 .ropeproject
 
@@ -103,3 +104,8 @@ ENV/
 DataSets/
 DataSources/
 
+bin/
+share/
+.idea
+include/
+pip-self*.json
