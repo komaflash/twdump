@@ -61,8 +61,8 @@ class TweetQuery(object):
                         # if we reach here, everything is
                         # all right and we want to leave the loop
                         retry = retry_max+1
-                    except json.decoder.JSONDecodeError as err:
-                        logging.warning("Query failed, try %s/%s (%s)", retry, retry_max, str(err))
+                    except Exception as err:
+                        logging.warning("Query for %s failed, try %s/%s (%s)", date_range, retry, retry_max, str(err))
                         retry = retry+1
 
                 tweet_count = tweet_count + len(tweet_query)
