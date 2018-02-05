@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+from csv import dialect
 
 from twitterscraper import query_tweets
 import csv
@@ -35,7 +36,7 @@ class TweetQuery(object):
 
         # open the csv file
         with open(file_name, 'a') as fw:
-            writer = csv.writer(fw)
+            writer = csv.writer(fw, dialect='excel')
 
             # write header
             writer.writerow(
@@ -54,7 +55,7 @@ class TweetQuery(object):
                                                    limit=100000,
                                                    begindate=date_range[0],
                                                    enddate=date_range[1],
-                                                   poolsize=5,
+                                                   poolsize=20,
                                                    lang='')
 
                         # if we reach here, everything is
