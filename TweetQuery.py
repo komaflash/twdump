@@ -1,13 +1,13 @@
 # -*- coding: utf-8 -*-
-from csv import dialect
 
-from twitterscraper import query_tweets
+
+import calendar
 import csv
 import datetime as dt
-import calendar
 import logging
 import re
-import json
+
+from twitterscraper import query_tweets
 
 
 class TweetQuery(object):
@@ -45,7 +45,7 @@ class TweetQuery(object):
             # for each range:
             #   query tweets
             #   write them to csv
-            for date_range in date_ranges:
+            for date_start, date_end in date_ranges:
                 retry = 1
                 retry_max = 3
 
@@ -53,17 +53,19 @@ class TweetQuery(object):
                     try:
                         tweet_query = query_tweets("from:" + self.accountName,
                                                    limit=100000,
-                                                   begindate=date_range[0],
-                                                   enddate=date_range[1],
+                                                   begindate=date_start,
+                                                   enddate=date_end,
                                                    poolsize=20,
                                                    lang='')
 
                         # if we reach here, everything is
                         # all right and we want to leave the loop
-                        retry = retry_max+1
+                        retry = retry_max + 1
                     except Exception as err:
-                        logging.warning("Query for %s failed, try %s/%s (%s)", date_range, retry, retry_max, str(err))
-                        retry = retry+1
+                        logging.warning(
+                            "Query from {date_start} to {date_end} failed. Retry {retry} of {retry_max} (Error: {})",
+                            date_start, date_end, retry, retry_max, str(err))
+                        retry = retry + 1
 
                 tweet_count = tweet_count + len(tweet_query)
 
@@ -80,7 +82,8 @@ class TweetQuery(object):
                                          tweet.user,
                                          self.__extract_hash_tags__(tweet.text)])
                     except Exception as ex:
-                        logging.error("Failed to process tweet. \n tweet_text=%s \n error=%s ", tweet.id, str(ex))
+                        logging.error("Failed to process tweet. \n tweet=%s \n error=%s ", self.tweet_to_log(tweet),
+                                      str(ex))
 
         return tweet_count
 
@@ -128,3 +131,6 @@ class TweetQuery(object):
 
         logging.debug(findings)
         return '/'.join(str(x).replace("#", "") for x in findings)
+
+    def tweet_to_log(self, tweet):
+        return str([tweet.user, tweet.id, tweet.timestamp, tweet.url, tweet.user, len(tweet.text)])
