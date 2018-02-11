@@ -31,7 +31,9 @@ if __name__ == '__main__':
     timer = Timer()
     for handle in handles:
         timer.start()
-        query = TweetQuery(handle, output_directory)
+        query = TweetQuery(handle, output_directory, "weekly")
+        #query = TweetQuery(handle, output_directory, "monthly")
+
         cnt = query.download_tweets_to_csv(begin, end)
         timer.stop()
         logging.info("SUCCESS (company=%s tweets=%s duration=%s)", handle, cnt, timer.elapsed())
