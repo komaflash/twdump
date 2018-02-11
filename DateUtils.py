@@ -21,12 +21,11 @@ class DateUtils:
 
         return ranges
 
-    @staticmethod
-    def get_date_ranges_week(a, b):
+    def get_date_ranges_week(self, a, b):
         weeks = []
 
-        for each in u.get_delta(a, b, timedelta(days=1)):
-            d = u.week_range(each)
+        for each in self.get_delta(a, b, timedelta(days=1)):
+            d = self.week_range(each)
             if d not in weeks:
                 weeks.append(d)
 
@@ -67,13 +66,3 @@ class DateUtils:
         while curr < b:
             yield curr
             curr += delta
-
-
-if __name__ == '__main__':
-    a = date(2017, 1, 1)
-    b = date(2017, 12, 31)
-
-    u = DateUtils()
-
-    for w in weeks:
-        print(w)

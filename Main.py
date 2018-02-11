@@ -6,7 +6,9 @@ from Timer import Timer
 from TweetQuery import TweetQuery
 
 # setup logging (will include logs from all used packages)
-logging.basicConfig(format='%(asctime)s %(name)-12s %(levelname)-8s %(message)s', level=logging.INFO)
+logging.basicConfig(format='%(asctime)s %(name)-12s %(levelname)-8s %(message)s',
+                    level=logging.INFO, filename='tweetQuery.log')
+
 
 if __name__ == '__main__':
 
@@ -14,10 +16,10 @@ if __name__ == '__main__':
     # CONFIG BEGIN
     #
 
-    account_file = 'DataSources/accounts.txt'
+    account_file = 'DataSources/company_names.txt'
     output_directory = "DataSets"
-    begin = dt.date(2015, 1, 1)
-    end = dt.date(2015, 12, 31)
+    begin = dt.date(2010, 1, 1)
+    end = dt.date(2017, 12, 31)
 
     #
     # CONFIG END
@@ -32,7 +34,7 @@ if __name__ == '__main__':
     for handle in handles:
         timer.start()
         query = TweetQuery(handle, output_directory, "weekly")
-        #query = TweetQuery(handle, output_directory, "monthly")
+        # query = TweetQuery(handle, output_directory, "monthly")
 
         cnt = query.download_tweets_to_csv(begin, end)
         timer.stop()

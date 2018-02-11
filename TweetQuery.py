@@ -1,9 +1,7 @@
 # -*- coding: utf-8 -*-
 
-
 from DateUtils import DateUtils
 import csv
-import datetime as dt
 import logging
 import re
 
@@ -49,34 +47,38 @@ class TweetQuery(object):
             # write header
             writer.writerow(
                 ["fullname", "id", "likes", "replies", "retweets", "text", "timestamp", "url", "user", "hashtags"])
+        fw.close()
 
-            # for each range:
-            #   query tweets
-            #   write them to csv
-            for date_start, date_end in date_ranges:
-                retry = 1
-                retry_max = 3
+        # for each range:
+        #   query tweets
+        #   write them to csv
+        for date_start, date_end in date_ranges:
+            retry = 1
+            retry_max = 3
 
-                while retry <= retry_max:
-                    try:
-                        tweet_query = query_tweets("from:" + self.accountName,
-                                                   limit=100000,
-                                                   begindate=date_start,
-                                                   enddate=date_end,
-                                                   poolsize=20,
-                                                   lang='')
+            tweet_query = []
+            while retry <= retry_max:
+                try:
+                    tweet_query = query_tweets("from:" + self.accountName,
+                                               limit=100000,
+                                               begindate=date_start,
+                                               enddate=date_end,
+                                               poolsize=2,
+                                               lang='')
 
-                        # if we reach here, everything is
-                        # all right and we want to leave the loop
-                        retry = retry_max + 1
-                    except Exception as err:
-                        logging.warning(
-                            "Query from {date_start} to {date_end} failed. Retry {retry} of {retry_max} (Error: {})",
-                            date_start, date_end, retry, retry_max, str(err))
-                        retry = retry + 1
+                    # if we reach here, everything is
+                    # all right and we want to leave the loop
+                    retry = retry_max + 1
+                except Exception as err:
+                    logging.warning(
+                        "Query for {} from {date_start} to {date_end} failed. Retry {retry} of {retry_max} (Error: {})",
+                        self.accountName, date_start, date_end, retry, retry_max, str(err))
+                    retry = retry + 1
 
-                tweet_count = tweet_count + len(tweet_query)
+            tweet_count = tweet_count + len(tweet_query)
 
+            with open(file_name, 'a') as fw:
+                writer = csv.writer(fw, dialect='excel')
                 for tweet in tweet_query:
                     try:
                         writer.writerow([tweet.fullname,
@@ -92,6 +94,7 @@ class TweetQuery(object):
                     except Exception as ex:
                         logging.error("Failed to process tweet. \n tweet=%s \n error=%s ", self.tweet_to_log(tweet),
                                       str(ex))
+            fw.close()
 
         return tweet_count
 
