@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 
-import calendar
+from DateUtils import DateUtils
 import csv
 import datetime as dt
 import logging
@@ -13,9 +13,12 @@ from twitterscraper import query_tweets
 class TweetQuery(object):
     """A simple class that handles the tweet querying with twitterscraper"""
 
-    def __init__(self, account_name, output_dir):
+    def __init__(self, account_name, output_dir, mode):
         self.accountName = account_name
         self.output_directory = output_dir
+
+        self.mode = mode
+        self.__validate_mode__()
 
         # pre-compiled regular expression to extract hashtags from a string.
         self.regexHashTag = re.compile('#[a-zA-Z0-9]+', re.IGNORECASE)
@@ -26,7 +29,12 @@ class TweetQuery(object):
         # we'll query the api per month.
         # we calculated the start and end dates
         # of each month between begin and end
-        date_ranges = self.__get_date_ranges__(date_begin, date_end)
+        util = DateUtils()
+
+        if self.mode == "monthly":
+            date_ranges = util.get_date_ranges(date_begin, date_end)
+        else:
+            date_ranges = util.get_date_ranges_week(date_begin, date_end)
 
         # create the file name
         file_name = self.__get_output_file_name__()
@@ -87,29 +95,11 @@ class TweetQuery(object):
 
         return tweet_count
 
-    def __get_date_ranges__(self, a, b):
-        """Get a list of begin and end dates per month"""
-        ranges = []
+    def __validate_mode__(self):
+        if self.mode == "weekly" or self.mode == "monthly":
+            return
 
-        for x in range(0, self.__diff_month__(a, b) + 1):
-            start_date = self.__add_months__(a, x)
-            last_day_in_month = calendar.monthrange(start_date.year, start_date.month)
-            end_date = dt.date(start_date.year, start_date.month, last_day_in_month[1])
-            ranges.append(tuple((start_date, end_date)))
-
-        return ranges
-
-    def __add_months__(self, start, months):
-        """Adds n months to start date"""
-        month = start.month - 1 + months
-        year = start.year + month // 12
-        month = month % 12 + 1
-        day = min(start.day, calendar.monthrange(year, month)[1])
-        return dt.date(year, month, day)
-
-    def __diff_month__(self, d1, d2):
-        """Get the total number of months between d1 and d2"""
-        return abs((d1.year - d2.year) * 12 + d1.month - d2.month)
+        raise ValueError('mode must be weekly or monthly')
 
     def __get_output_file_name__(self):
         """Create the file name which contains the account name"""
