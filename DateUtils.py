@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 
-# import datetime as dt
-from datetime import date, timedelta, datetime
 import calendar
+# import datetime as dt
+from datetime import date, timedelta
 
 
 class DateUtils:
@@ -24,7 +24,7 @@ class DateUtils:
     def get_date_ranges_week(self, a, b):
         weeks = []
 
-        for each in self.get_delta(a, b, timedelta(days=1)):
+        for each in self.get_delta(a, b, timedelta(days=4)):
             d = self.week_range(each)
             if d not in weeks:
                 weeks.append(d)
